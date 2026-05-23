@@ -218,7 +218,7 @@ def apply_theme(fig, height=320):
 # ─────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv("ONLINE_EDUCATION_SYSTEM_REVIEW.csv")
+    df = pd.read_excel("online_education_synthetic_20k.xlsx", engine="openpyxl")
     df['Engaged in group studies?'] = df['Engaged in group studies?'].str.strip().str.capitalize()
     marks_map = {'0-10':5,'11-20':15,'21-30':25,'31-40':35,'41-50':45,
                  '51-60':55,'61-70':65,'71-80':75,'81-90':85,'91-100':95}
