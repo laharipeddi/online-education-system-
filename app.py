@@ -179,7 +179,7 @@ body, .stApp {
     padding: 8px 12px;
     margin-bottom: 8px;
     font-size: 12px;
-    color: #333;
+    color: #ffffff;
     border: 1px solid #ddd;
 }
 
