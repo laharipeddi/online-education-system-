@@ -20,49 +20,61 @@ st.set_page_config(
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-/* Sidebar beige */
+/* ── SIDEBAR BASE ── */
 [data-testid="stSidebar"] {
     background-color: #F0EBE1 !important;
 }
-[data-testid="stSidebar"] * {
+
+/* Sidebar labels */
+[data-testid="stSidebar"] label p,
+[data-testid="stSidebar"] .stMarkdown p,
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] h5 {
     color: #1a1a1a !important;
 }
-[data-testid="stSidebar"] .stSelectbox label,
-[data-testid="stSidebar"] .stMultiSelect label {
+
+/* Filter heading style */
+[data-testid="stSidebar"] .stSelectbox label p {
     font-size: 11px !important;
     font-weight: 700 !important;
     letter-spacing: 0.06em !important;
     text-transform: uppercase !important;
     color: #555 !important;
 }
-/* Dropdown box background */
-[data-testid="stSidebar"] [data-testid="stSelectbox"] > div > div,
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] > div > div {
+
+/* ── SELECTBOX CONTAINER ── */
+[data-testid="stSidebar"] [data-testid="stSelectbox"] > div,
+[data-testid="stSidebar"] [data-testid="stSelectbox"] > div > div {
     background-color: #1a1a1a !important;
-    color: #ffffff !important;
     border-radius: 8px !important;
     border: none !important;
 }
-/* Selected value text inside dropdown */
-[data-testid="stSidebar"] [data-testid="stSelectbox"] span,
-[data-testid="stSidebar"] [data-testid="stSelectbox"] div[class*="ValueContainer"] *,
-[data-testid="stSidebar"] [data-testid="stSelectbox"] div[class*="singleValue"],
-[data-testid="stSidebar"] [data-testid="stSelectbox"] input,
-[data-testid="stSidebar"] [data-testid="stSelectbox"] p {
+
+/* ── ALL TEXT INSIDE SELECTBOX WHITE ── */
+[data-testid="stSidebar"] [data-testid="stSelectbox"] * {
     color: #ffffff !important;
+    background-color: transparent !important;
 }
-/* Dropdown arrow icon */
-[data-testid="stSidebar"] [data-testid="stSelectbox"] svg {
+
+/* ── ARROW SVG ── */
+[data-testid="stSidebar"] [data-testid="stSelectbox"] svg path {
+    stroke: #ffffff !important;
     fill: #ffffff !important;
 }
-/* Dropdown open options list */
-[data-testid="stSidebar"] ul[role="listbox"],
-[data-testid="stSidebar"] ul[role="listbox"] li {
+
+/* ── OPEN DROPDOWN (rendered in a portal outside sidebar) ── */
+div[data-baseweb="popover"] ul,
+div[data-baseweb="popover"] li,
+div[data-baseweb="menu"],
+div[data-baseweb="menu"] * {
     background-color: #1a1a1a !important;
     color: #ffffff !important;
 }
-[data-testid="stSidebar"] ul[role="listbox"] li:hover {
-    background-color: #2a2a2a !important;
+div[data-baseweb="menu"] li:hover,
+div[data-baseweb="menu"] [aria-selected="true"] {
+    background-color: #2d2d2d !important;
 }
 
 /* Main area dark */
