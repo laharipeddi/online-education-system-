@@ -35,12 +35,34 @@ st.markdown("""
     text-transform: uppercase !important;
     color: #555 !important;
 }
+/* Dropdown box background */
 [data-testid="stSidebar"] [data-testid="stSelectbox"] > div > div,
 [data-testid="stSidebar"] [data-testid="stMultiSelect"] > div > div {
     background-color: #1a1a1a !important;
     color: #ffffff !important;
     border-radius: 8px !important;
     border: none !important;
+}
+/* Selected value text inside dropdown */
+[data-testid="stSidebar"] [data-testid="stSelectbox"] span,
+[data-testid="stSidebar"] [data-testid="stSelectbox"] div[class*="ValueContainer"] *,
+[data-testid="stSidebar"] [data-testid="stSelectbox"] div[class*="singleValue"],
+[data-testid="stSidebar"] [data-testid="stSelectbox"] input,
+[data-testid="stSidebar"] [data-testid="stSelectbox"] p {
+    color: #ffffff !important;
+}
+/* Dropdown arrow icon */
+[data-testid="stSidebar"] [data-testid="stSelectbox"] svg {
+    fill: #ffffff !important;
+}
+/* Dropdown open options list */
+[data-testid="stSidebar"] ul[role="listbox"],
+[data-testid="stSidebar"] ul[role="listbox"] li {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+[data-testid="stSidebar"] ul[role="listbox"] li:hover {
+    background-color: #2a2a2a !important;
 }
 
 /* Main area dark */
