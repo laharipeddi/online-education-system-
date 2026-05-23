@@ -79,7 +79,7 @@ div[data-baseweb="menu"] [aria-selected="true"] {
 
 /* Main area dark */
 .main .block-container {
-    background-color: #111111;
+    background-color: #818a94;
     padding-top: 1rem;
     padding-bottom: 2rem;
 }
