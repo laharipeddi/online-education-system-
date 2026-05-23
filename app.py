@@ -84,7 +84,7 @@ div[data-baseweb="menu"] [aria-selected="true"] {
     padding-bottom: 2rem;
 }
 body, .stApp {
-    background-color: #111111 !important;
+    background-color:#818a94 !important;
     color: #e0e0e0 !important;
 }
 
