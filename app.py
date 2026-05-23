@@ -67,12 +67,12 @@ st.markdown("""
 
 /* Main area dark */
 .main .block-container {
-    background-color: #818a94;
+    background-color: #111111;
     padding-top: 1rem;
     padding-bottom: 2rem;
 }
 body, .stApp {
-    background-color: #818a94 !important;
+    background-color: #111111 !important;
     color: #e0e0e0 !important;
 }
 
@@ -153,12 +153,12 @@ body, .stApp {
     margin-bottom: 8px;
     border-left: 4px solid;
 }
-.insight-green  { background:#1a2e1a; border-color:#4caf50; }
-.insight-blue   { background:#1a2238; border-color:#42a5f5; }
-.insight-amber  { background:#2e2010; border-color:#ffb74d; }
-.insight-red    { background:#2e1010; border-color:#f44336; }
-.insight-title  { font-size:12px; font-weight:700; margin-bottom:4px; }
-.insight-body   { font-size:11px; color:#aaa; line-height:1.5; }
+.insight-green  { background:#1a2e1a !important; border-color:#4caf50; }
+.insight-blue   { background:#1a2238 !important; border-color:#42a5f5; }
+.insight-amber  { background:#2e2010 !important; border-color:#ffb74d; }
+.insight-red    { background:#2e1010 !important; border-color:#f44336; }
+.insight-title  { font-size:12px; font-weight:700; margin-bottom:4px; color:#e0e0e0 !important; }
+.insight-body   { font-size:11px; color:#bbbbbb !important; line-height:1.5; }
 
 /* Sidebar info boxes */
 .sidebar-info {
