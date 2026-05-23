@@ -45,7 +45,7 @@ st.markdown("""
 
 /* Main area dark */
 .main .block-container {
-    background-color: #0F1923;
+    background-color: #818a94;
     padding-top: 1rem;
     padding-bottom: 2rem;
 }
