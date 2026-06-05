@@ -6,15 +6,15 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import json
 try:
-    from openai import OpenAI
-    OPENAI_AVAILABLE = True
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
 except ImportError:
-    OPENAI_AVAILABLE = False
+    GENAI_AVAILABLE = False
 
 # ─────────────────────────────────────────────
-# API KEY — replace the value below with your Grok key
+# API KEY — paste your Google Gemini API key below
 # ─────────────────────────────────────────────
-GROK_API_KEY = "xai-YKK2BBs4P55EeUNvR1N5vWJ0pguBe1OUktAi9WZuXJsInft17hXlMyKBhQEscTd85m1rXt6aNSEcRSGZ"
+GEMINI_API_KEY = "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"
 
 # ─────────────────────────────────────────────
 # PAGE CONFIG
@@ -1224,7 +1224,7 @@ with tabs[6]:
     st.markdown('''
     <div class="hero-banner" style="margin-bottom:1rem">
       <div class="hero-title" style="font-size:18px">🤖 Grok AI — Education Insights Engine</div>
-      <div class="hero-sub">Powered by xAI Grok · Analyses your filtered dataset · Generates natural language insights</div>
+      <div class="hero-sub">Powered by Google Gemini 1.5 Flash · Analyses your filtered dataset · Generates natural language insights</div>
     </div>
     ''', unsafe_allow_html=True)
 
@@ -1363,22 +1363,21 @@ Task: {prompt_text}
 
 Base your analysis strictly on the numbers provided. Be specific with percentages and scores."""
 
-            with st.spinner("🤖 Grok is analysing your data..."):
+            with st.spinner("🤖 Gemini is analysing your data..."):
                 try:
-                    client = OpenAI(
-                        api_key=GROK_API_KEY,
-                        base_url="https://api.x.ai/v1",
+                    genai.configure(api_key=GEMINI_API_KEY)
+                    model = genai.GenerativeModel(
+                        model_name="gemini-1.5-flash",
+                        system_instruction=system_prompt,
                     )
-                    response = client.chat.completions.create(
-                        model="grok-3-mini",
-                        messages=[
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user",   "content": user_prompt},
-                        ],
-                        max_tokens=1500,
-                        temperature=0.3,
+                    response = model.generate_content(
+                        user_prompt,
+                        generation_config=genai.GenerationConfig(
+                            max_output_tokens=1500,
+                            temperature=0.3,
+                        )
                     )
-                    result_text = response.choices[0].message.content
+                    result_text = response.text
 
                     st.markdown('''
                     <div style="background:#1a2238;border:1px solid #2a3a5a;border-radius:10px;
@@ -1388,23 +1387,20 @@ Base your analysis strictly on the numbers provided. Be specific with percentage
                     st.markdown(result_text)
                     st.markdown("</div>", unsafe_allow_html=True)
 
-                    # Token usage info
-                    if hasattr(response, "usage") and response.usage:
-                        st.markdown(
-                            f"<div style='font-size:10px;color:#555;margin-top:8px;text-align:right'>"
-                            f"Tokens used: {response.usage.total_tokens} · "
-                            f"Model: grok-3-mini</div>",
-                            unsafe_allow_html=True
-                        )
+                    st.markdown(
+                        f"<div style='font-size:10px;color:#555;margin-top:8px;text-align:right'>"
+                        f"Model: gemini-1.5-flash · Google AI</div>",
+                        unsafe_allow_html=True
+                    )
 
                 except Exception as e:
                     err = str(e)
-                    if "401" in err or "invalid" in err.lower() or "auth" in err.lower():
-                        st.error("❌ Invalid API key. Please check your Grok API key and try again.")
-                    elif "429" in err:
-                        st.error("❌ Rate limit exceeded. Please wait a moment and try again.")
+                    if "401" in err or "invalid" in err.lower() or "api_key" in err.lower():
+                        st.error("❌ Invalid API key. Please check your Gemini API key on line 17.")
+                    elif "429" in err or "quota" in err.lower():
+                        st.error("❌ Rate limit / quota exceeded. Wait a moment and try again.")
                     elif "model" in err.lower():
-                        st.error(f"❌ Model error: {err}. Try updating the model name.")
+                        st.error(f"❌ Model error: {err}")
                     else:
                         st.error(f"❌ Error: {err}")
     else:
