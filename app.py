@@ -1340,7 +1340,7 @@ with tabs[6]:
 
     # ── GENERATE AI ANALYSIS ──
     if generate_btn:
-        if not OPENAI_AVAILABLE:
+         if not GENAI_AVAILABLE:
             st.error("⚠️ openai package not installed. Run: pip install openai")
         elif selected_analysis == "Custom Question" and not custom_prompt.strip():
             st.warning("Please enter your custom question above.")
