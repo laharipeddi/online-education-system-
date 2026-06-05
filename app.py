@@ -1396,15 +1396,7 @@ Base your analysis strictly on the numbers provided. Be specific with percentage
                         )
 
                 except Exception as e:
-                    err = str(e)
-                    if "401" in err or "invalid" in err.lower() or "auth" in err.lower():
-                        st.error("❌ Invalid API key. Please check your Groq API key on line 17.")
-                    elif "429" in err or "quota" in err.lower() or "rate" in err.lower():
-                        st.error("❌ Rate limit exceeded. Wait a moment and try again.")
-                    elif "model" in err.lower():
-                        st.error(f"❌ Model error: {err}")
-                    else:
-                        st.error(f"❌ Error: {err}")
+                    st.error(f"❌ Full error: {str(e)}")
     else:
         # Placeholder before generation
         st.markdown('''
