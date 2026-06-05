@@ -14,7 +14,7 @@ except ImportError:
 # ─────────────────────────────────────────────
 # API KEY — replace the value below with your Grok key
 # ─────────────────────────────────────────────
-GROK_API_KEY = "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"
+GROK_API_KEY = "xai-YKK2BBs4P55EeUNvR1N5vWJ0pguBe1OUktAi9WZuXJsInft17hXlMyKBhQEscTd85m1rXt6aNSEcRSGZ"
 
 # ─────────────────────────────────────────────
 # PAGE CONFIG
