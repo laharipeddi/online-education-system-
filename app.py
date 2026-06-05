@@ -1370,7 +1370,7 @@ Base your analysis strictly on the numbers provided. Be specific with percentage
                         base_url="https://api.groq.com/openai/v1",
                     )
                     response = client.chat.completions.create(
-                        model="llama3-8b-8192",
+                        model="llama-3.3-70b-versatile",
                         messages=[
                             {"role": "system", "content": system_prompt},
                             {"role": "user",   "content": user_prompt},
@@ -1391,7 +1391,7 @@ Base your analysis strictly on the numbers provided. Be specific with percentage
                     if hasattr(response, "usage") and response.usage:
                         st.markdown(
                             f"<div style='font-size:10px;color:#555;margin-top:8px;text-align:right'>"
-                            f"Tokens used: {response.usage.total_tokens} · Model: llama3-8b-8192 · Groq</div>",
+                            f"Tokens used: {response.usage.total_tokens} · Model: llama-3.3-70b-versatile · Groq</div>",
                             unsafe_allow_html=True
                         )
 
