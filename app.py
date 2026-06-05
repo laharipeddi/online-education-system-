@@ -14,7 +14,7 @@ except ImportError:
 # ─────────────────────────────────────────────
 # API KEY — paste your Groq API key below (from console.groq.com/keys)
 # ─────────────────────────────────────────────
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 
 # ─────────────────────────────────────────────
 # PAGE CONFIG
