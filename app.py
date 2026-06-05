@@ -4,6 +4,17 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import json
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+
+# ─────────────────────────────────────────────
+# API KEY — replace the value below with your Grok key
+# ─────────────────────────────────────────────
+GROK_API_KEY = "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"
 
 # ─────────────────────────────────────────────
 # PAGE CONFIG
@@ -79,12 +90,12 @@ div[data-baseweb="menu"] [aria-selected="true"] {
 
 /* Main area dark */
 .main .block-container {
-    background-color: #818a94;
+    background-color: #111111;
     padding-top: 1rem;
     padding-bottom: 2rem;
 }
 body, .stApp {
-    background-color:#818a94 !important;
+    background-color: #111111 !important;
     color: #e0e0e0 !important;
 }
 
@@ -179,8 +190,8 @@ body, .stApp {
     padding: 8px 12px;
     margin-bottom: 8px;
     font-size: 12px;
-    color: #ffffff;
-    border: 1px solid #ddd;
+    color: #ffffff !important;
+    border: 1px solid #2a2a2a;
 }
 
 /* Tab styling */
@@ -313,6 +324,8 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("<div style='font-size:10px;color:#888;text-align:center'>Filters apply to all pages</div>", unsafe_allow_html=True)
 
+
+
 # ─────────────────────────────────────────────
 # FILTER DATA
 # ─────────────────────────────────────────────
@@ -344,6 +357,7 @@ tabs = st.tabs([
     "😊 Satisfaction",
     "🧠 Behaviour & Environment",
     "📶 Digital Access",
+    "🤖 AI Insights",
 ])
 
 # ══════════════════════════════════════════════
@@ -1201,3 +1215,205 @@ with tabs[5]:
                         size_max=35)
     apply_theme(fig_sc, 300)
     st.plotly_chart(fig_sc, use_container_width=True)
+
+# ══════════════════════════════════════════════
+# TAB 7 — AI INSIGHTS
+# ══════════════════════════════════════════════
+with tabs[6]:
+
+    st.markdown('''
+    <div class="hero-banner" style="margin-bottom:1rem">
+      <div class="hero-title" style="font-size:18px">🤖 Grok AI — Education Insights Engine</div>
+      <div class="hero-sub">Powered by xAI Grok · Analyses your filtered dataset · Generates natural language insights</div>
+    </div>
+    ''', unsafe_allow_html=True)
+
+    # Analysis type selector
+    analysis_types = {
+        "Executive Summary":     "Give an executive summary of this online education dataset. Cover overall performance, satisfaction, and key trends.",
+        "Performance Analysis":  "Analyse the academic performance data. Identify top and bottom performing groups, key drivers of performance, and recommendations.",
+        "Satisfaction Analysis": "Analyse student satisfaction levels. What drives good vs bad satisfaction? Which groups are most/least satisfied?",
+        "Behaviour & Habits":    "Analyse student behaviour patterns — study time, sleep, social media, sports, gaming. What habits correlate with better outcomes?",
+        "Digital Access":        "Analyse internet quality and engagement patterns. How does digital access affect performance and satisfaction?",
+        "Demographics Deep Dive":"Provide a demographic breakdown. Identify which student groups (gender, location, education level) perform best and why.",
+        "Risk Analysis":         "Identify at-risk student groups — low performers, dissatisfied students, poor internet access. Prioritise intervention recommendations.",
+        "Custom Question":       None,
+    }
+
+    col_sel, col_btn = st.columns([3, 1])
+    with col_sel:
+        selected_analysis = st.selectbox(
+            "Choose Analysis Type",
+            list(analysis_types.keys()),
+            index=0
+        )
+    with col_btn:
+        st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+        generate_btn = st.button("🚀 Generate AI Analysis", use_container_width=True)
+
+    # Custom question input
+    custom_prompt = ""
+    if selected_analysis == "Custom Question":
+        custom_prompt = st.text_area(
+            "Enter your question about the dataset",
+            placeholder="e.g. Which device type produces the most satisfied students and why?",
+            height=80
+        )
+
+    # ── BUILD DATA SUMMARY FOR AI ──
+    def build_data_summary(df):
+        total = len(df)
+        avg_perf = df["Performance in online"].mean()
+        good_sat = (df["Your level of satisfaction in Online Education"] == "Good").mean() * 100
+        bad_sat  = (df["Your level of satisfaction in Online Education"] == "Bad").mean() * 100
+        high_p   = (df["Performance in online"] >= 8).mean() * 100
+        low_p    = (df["Performance in online"] <= 4).mean() * 100
+
+        perf_by_gender   = df.groupby("Gender")["Performance in online"].mean().round(2).to_dict()
+        perf_by_location = df.groupby("Home Location")["Performance in online"].mean().round(2).to_dict()
+        perf_by_edu      = df.groupby("Level of Education")["Performance in online"].mean().round(2).to_dict()
+        perf_by_device   = df.groupby("Device type used to attend classes")["Performance in online"].mean().round(2).to_dict()
+        perf_by_sat      = df.groupby("Your level of satisfaction in Online Education")["Performance in online"].mean().round(2).to_dict()
+        sat_by_gender    = df.groupby("Gender")["Your level of satisfaction in Online Education"].value_counts(normalize=True).mul(100).round(1).to_dict()
+        sat_by_location  = df.groupby("Home Location")["Your level of satisfaction in Online Education"].value_counts(normalize=True).mul(100).round(1).to_dict()
+        study_perf       = df.groupby("Study time (Hours)")["Performance in online"].mean().round(2).to_dict()
+        social_perf      = df.groupby("Time spent on social media (Hours)")["Performance in online"].mean().round(2).to_dict()
+        sleep_perf       = df.groupby("Sleep time (Hours)")["Performance in online"].mean().round(2).to_dict()
+        internet_perf    = df.groupby("Internet facility in your locality")["Performance in online"].mean().round(2).to_dict()
+        room_perf        = df.groupby("Have separate room for studying?")["Performance in online"].mean().round(2).to_dict()
+        gender_counts    = df["Gender"].value_counts().to_dict()
+        location_counts  = df["Home Location"].value_counts().to_dict()
+        edu_counts       = df["Level of Education"].value_counts().to_dict()
+        device_counts    = df["Device type used to attend classes"].value_counts().to_dict()
+        eco_counts       = df["Economic status"].value_counts().to_dict()
+
+        summary = {
+            "overview": {
+                "total_students": total,
+                "avg_performance_out_of_10": round(avg_perf, 2),
+                "high_performers_pct": round(high_p, 1),
+                "low_performers_pct": round(low_p, 1),
+                "good_satisfaction_pct": round(good_sat, 1),
+                "bad_satisfaction_pct": round(bad_sat, 1),
+                "avg_study_hours": round(df["Study time (Hours)"].mean(), 2),
+                "avg_sleep_hours": round(df["Sleep time (Hours)"].mean(), 2),
+                "avg_social_media_hours": round(df["Time spent on social media (Hours)"].mean(), 2),
+                "avg_internet_quality_out_of_5": round(df["Internet facility in your locality"].mean(), 2),
+                "avg_interaction_rating": round(df["Your interaction in online mode"].mean(), 2),
+                "avg_doubt_clearing_rating": round(df["Clearing doubts with faculties in online mode"].mean(), 2),
+            },
+            "demographics": {
+                "gender_counts": gender_counts,
+                "location_counts": location_counts,
+                "education_counts": edu_counts,
+                "device_counts": device_counts,
+                "economic_status": eco_counts,
+            },
+            "performance_by_group": {
+                "by_gender": perf_by_gender,
+                "by_location": perf_by_location,
+                "by_education": perf_by_edu,
+                "by_device": perf_by_device,
+                "by_satisfaction": perf_by_sat,
+            },
+            "satisfaction_by_group": {
+                "by_gender": {str(k): v for k, v in sat_by_gender.items()},
+                "by_location": {str(k): v for k, v in sat_by_location.items()},
+            },
+            "behaviour_patterns": {
+                "study_hours_vs_avg_performance": study_perf,
+                "social_media_hours_vs_avg_performance": social_perf,
+                "sleep_hours_vs_avg_performance": sleep_perf,
+                "study_room_vs_avg_performance": room_perf,
+            },
+            "digital_access": {
+                "internet_quality_vs_avg_performance": internet_perf,
+            },
+        }
+        return summary
+
+    data_summary = build_data_summary(df)
+
+    # ── VIEW DATA SENT TO AI ──
+    with st.expander("📊 View Data Sent to AI"):
+        st.json(data_summary)
+
+    # ── GENERATE AI ANALYSIS ──
+    if generate_btn:
+        if not OPENAI_AVAILABLE:
+            st.error("⚠️ openai package not installed. Run: pip install openai")
+        elif selected_analysis == "Custom Question" and not custom_prompt.strip():
+            st.warning("Please enter your custom question above.")
+        else:
+            prompt_text = custom_prompt if selected_analysis == "Custom Question" else analysis_types[selected_analysis]
+
+            system_prompt = """You are an expert education data analyst. You will be given a JSON summary of an online education survey dataset. 
+Analyse the data thoroughly and provide clear, structured insights with:
+- Bullet points for key findings
+- Specific numbers from the data
+- Actionable recommendations
+- Highlight surprising or counter-intuitive findings
+Keep the response well-structured with clear section headers."""
+
+            user_prompt = f"""Here is the summarised dataset (filtered by current selections):
+
+{json.dumps(data_summary, indent=2)}
+
+Task: {prompt_text}
+
+Base your analysis strictly on the numbers provided. Be specific with percentages and scores."""
+
+            with st.spinner("🤖 Grok is analysing your data..."):
+                try:
+                    client = OpenAI(
+                        api_key=GROK_API_KEY,
+                        base_url="https://api.x.ai/v1",
+                    )
+                    response = client.chat.completions.create(
+                        model="grok-3-mini",
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user",   "content": user_prompt},
+                        ],
+                        max_tokens=1500,
+                        temperature=0.3,
+                    )
+                    result_text = response.choices[0].message.content
+
+                    st.markdown('''
+                    <div style="background:#1a2238;border:1px solid #2a3a5a;border-radius:10px;
+                                padding:1.5rem;margin-top:1rem;line-height:1.7;color:#e0e0e0;
+                                font-size:13px">
+                    ''', unsafe_allow_html=True)
+                    st.markdown(result_text)
+                    st.markdown("</div>", unsafe_allow_html=True)
+
+                    # Token usage info
+                    if hasattr(response, "usage") and response.usage:
+                        st.markdown(
+                            f"<div style='font-size:10px;color:#555;margin-top:8px;text-align:right'>"
+                            f"Tokens used: {response.usage.total_tokens} · "
+                            f"Model: grok-3-mini</div>",
+                            unsafe_allow_html=True
+                        )
+
+                except Exception as e:
+                    err = str(e)
+                    if "401" in err or "invalid" in err.lower() or "auth" in err.lower():
+                        st.error("❌ Invalid API key. Please check your Grok API key and try again.")
+                    elif "429" in err:
+                        st.error("❌ Rate limit exceeded. Please wait a moment and try again.")
+                    elif "model" in err.lower():
+                        st.error(f"❌ Model error: {err}. Try updating the model name.")
+                    else:
+                        st.error(f"❌ Error: {err}")
+    else:
+        # Placeholder before generation
+        st.markdown('''
+        <div style="background:#1a1a2e;border:1px dashed #333;border-radius:10px;
+                    padding:2rem;text-align:center;margin-top:1rem;color:#555">
+            <div style="font-size:32px;margin-bottom:8px">🤖</div>
+            <div style="font-size:13px">Select an analysis type and click <b style="color:#c8b87a">🚀 Generate AI Analysis</b></div>
+            <div style="font-size:11px;margin-top:6px">Grok will analyse your current filtered dataset and generate structured insights</div>
+        </div>
+        ''', unsafe_allow_html=True)
